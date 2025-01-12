@@ -16,6 +16,6 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
-    testImplementation(libs.ktor.server.tests)
+//    testImplementation(libs.ktor.server.tests) //Need to comment it for issue: Could not find io.ktor:ktor-junit:3.0.2.
     testImplementation(libs.kotlin.test.junit)
 }
