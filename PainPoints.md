@@ -13,4 +13,8 @@ while a Instagram Clone
    in the common folder
    - We need to either manually put the resources in android specific drawable-mdpi/drawable-hdpi .. 
    and ios specific 1x,2x... or use gradle automation
-   - Solution: 
+   - Solution: For Android use
+   ```kotlin
+   return painterResource(id = R.mipmap.auth_image)
+   ```
+   - For ios: **No solution yet**
