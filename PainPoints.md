@@ -18,3 +18,7 @@ while a Instagram Clone
    return painterResource(id = R.mipmap.auth_image)
    ```
    - For ios: **No solution yet**
+
+3. Customize the status bar icon color
+   - No good support from android & ios
+   - So we will skip this

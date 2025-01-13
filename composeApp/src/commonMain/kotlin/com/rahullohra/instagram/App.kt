@@ -51,7 +51,7 @@ fun App() {
                     })
                 }
                 composable(route = InstagramScreens.UserNamePassword.title) {
-                    UsernamePasswordScreen()
+                    UsernamePasswordScreen(navController)
                 }
             }
         }
