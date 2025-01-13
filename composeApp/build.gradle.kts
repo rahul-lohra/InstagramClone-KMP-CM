@@ -34,7 +34,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.coil.compose)
-//            implementation("io.coil-kt:coil-compose:3.0.4")
+            implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
         }
         iosMain.dependencies {
             implementation(libs.coil.compose)
@@ -55,6 +55,7 @@ kotlin {
             implementation(libs.coil.svg)
             implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.6.0")
             implementation("com.squareup.okio:okio:3.10.2")
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
         }
     }
 }

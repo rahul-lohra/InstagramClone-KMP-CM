@@ -7,14 +7,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.svg.SvgDecoder
+import com.rahullohra.instagram.theme.IgTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -35,10 +41,23 @@ fun App() {
             .build()
     }
 
-    MaterialTheme(colors = MaterialTheme.colors.copy(primary = Color(0xFF3797EF))) {
-        AuthScreen()
+    IgTheme {
+        Scaffold() {
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = InstagramScreens.Auth.title){
+                composable(route = InstagramScreens.Auth.title) {
+                    AuthScreen(onSwitchAccountClick = {
+                        navController.navigate(InstagramScreens.UserNamePassword.title)
+                    })
+                }
+                composable(route = InstagramScreens.UserNamePassword.title) {
+                    UsernamePasswordScreen()
+                }
+            }
+        }
     }
 }
+
 @Composable
 fun Sample() {
     var showContent by remember { mutableStateOf(false) }
@@ -54,4 +73,9 @@ fun Sample() {
             }
         }
     }
+}
+
+enum class InstagramScreens(val title: String) {
+    Auth(title = "auth"),
+    UserNamePassword(title = "username_password"),
 }
