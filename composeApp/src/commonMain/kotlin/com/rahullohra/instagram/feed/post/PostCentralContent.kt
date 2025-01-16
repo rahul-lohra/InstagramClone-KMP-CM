@@ -88,7 +88,7 @@ fun PostCentralContent() {
 private fun PostIndexIndicator(modifier: Modifier, pagerState: PagerState) {
     val index = pagerState.currentPage + 1
     val total = pagerState.pageCount
-    Box(modifier, contentAlignment = Alignment.TopEnd) {
+    Box(modifier) {
         Icon(
             painterResource(Res.drawable.round_rectangle), null,
             modifier = Modifier.width(36.dp).height(24.dp),
@@ -96,6 +96,7 @@ private fun PostIndexIndicator(modifier: Modifier, pagerState: PagerState) {
         )
         Text(
             "$index/$total", fontSize = 12.sp,
+            lineHeight = 14.sp,
             color = Color(0xFFF9F9F9),
             modifier = Modifier
                 .align(Alignment.Center)
