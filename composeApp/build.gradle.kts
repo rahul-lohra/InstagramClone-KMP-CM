@@ -35,10 +35,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.coil.compose)
             implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
-//            implementation("io.ktor:ktor-client-android:1.3.2-1.4-M2")
+            implementation("io.ktor:ktor-client-android:3.0.3")
         }
         iosMain.dependencies {
             implementation(libs.coil.compose)
+            implementation("io.ktor:ktor-client-darwin:3.0.3")
         }
 
         commonMain.dependencies {

@@ -3,6 +3,7 @@ package com.rahullohra.instagram.feed.post
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -36,46 +38,49 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PostCentralContent() {
-    Box {
+    Column {
         val pagerState = rememberPagerState(pageCount = {
             4
         })
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.height(375.dp)
-                .fillMaxWidth()
-        ) { page ->
-//            Box(Modifier.fillMaxWidth()){
-            Text(
-                text = "Page: $page",
+        Box {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.height(375.dp)
+                    .fillMaxWidth()
+            ) { page ->
+                AsyncImage(model = "https://picsum.photos/200/300", "hello",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.FillBounds,
+                    onError = {
+                        println("AsyncImage Error")
+                        it.result.throwable.printStackTrace()
+                    }, onLoading = {
+                        println("AsyncImage Loading image")
+                    }, onSuccess = {
+                        println("AsyncImage success image")
+                    })
+            }
+
+            PostIndexIndicator(
+                Modifier
+                    .wrapContentHeight()
+                    .align(Alignment.TopEnd)
+                    .padding(14.dp), pagerState
             )
-//            }
-            AsyncImage(model = "https://picsum.photos/200/300", "hello", onError = {
-                println("AsyncImage Error")
-                it.result.throwable.printStackTrace()
-            }, onLoading = {
-                println("AsyncImage Loading image")
-            }, onSuccess = {
-                println("AsyncImage success image")
-            })
         }
 
-        BottomIndicator(
-            Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp), pagerState
-        )
+        Box {
+            BottomIndicator(
+                Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 8.dp), pagerState
+            )
 
-        PostIndexIndicator(
-            Modifier
-                .wrapContentHeight()
-                .align(Alignment.TopEnd)
-                .padding(14.dp), pagerState
-        )
+            LikesCommentRow(Modifier.align(Alignment.BottomCenter))
+        }
 
-        LikesCommentRow(Modifier.align(Alignment.BottomCenter))
     }
 }
 
