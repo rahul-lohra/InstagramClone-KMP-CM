@@ -1,4 +1,4 @@
-package com.rahullohra.instagram
+package com.rahullohra.instagram.auth
 
 
 import androidx.compose.runtime.Composable

@@ -35,6 +35,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.coil.compose)
             implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
+//            implementation("io.ktor:ktor-client-android:1.3.2-1.4-M2")
         }
         iosMain.dependencies {
             implementation(libs.coil.compose)
@@ -56,6 +57,7 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.6.0")
             implementation("com.squareup.okio:okio:3.10.2")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
         }
     }
 }

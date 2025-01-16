@@ -1,4 +1,4 @@
-package com.rahullohra.instagram
+package com.rahullohra.instagram.auth
 
 import IgLogo
 import androidx.compose.foundation.border
@@ -23,9 +23,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,11 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.rahullohra.instagram.IgFilledButton
+import com.rahullohra.instagram.IgTextButton
 import com.rahullohra.instagram.theme.md_theme_dark_navigation
 import com.rahullohra.instagram.theme.md_theme_dark_placeholder
 import com.rahullohra.instagram.theme.md_theme_light_navigation
@@ -47,7 +45,6 @@ import com.rahullohra.instagram.theme.md_theme_light_placeholder
 import instagramclone.composeapp.generated.resources.Res
 import instagramclone.composeapp.generated.resources.arrow_back_ios
 import instagramclone.composeapp.generated.resources.fb_logo
-import instagramclone.composeapp.generated.resources.instagram_logo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

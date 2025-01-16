@@ -5,21 +5,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.svg.SvgDecoder
+import com.rahullohra.instagram.auth.AuthScreen
+import com.rahullohra.instagram.auth.UsernamePasswordScreen
+import com.rahullohra.instagram.feed.FeedScreen
 import com.rahullohra.instagram.theme.IgTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -44,7 +43,7 @@ fun App() {
     IgTheme {
         Scaffold() {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = InstagramScreens.Auth.title){
+            NavHost(navController = navController, startDestination = InstagramScreens.Feed.title){
                 composable(route = InstagramScreens.Auth.title) {
                     AuthScreen(onSwitchAccountClick = {
                         navController.navigate(InstagramScreens.UserNamePassword.title)
@@ -52,6 +51,9 @@ fun App() {
                 }
                 composable(route = InstagramScreens.UserNamePassword.title) {
                     UsernamePasswordScreen(navController)
+                }
+                composable(route = InstagramScreens.Feed.title) {
+                    FeedScreen(navController)
                 }
             }
         }
@@ -78,4 +80,5 @@ fun Sample() {
 enum class InstagramScreens(val title: String) {
     Auth(title = "auth"),
     UserNamePassword(title = "username_password"),
+    Feed(title = "feed"),
 }
