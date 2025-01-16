@@ -2,12 +2,14 @@ package com.rahullohra.instagram.feed
 
 import IgLogo
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -34,16 +36,19 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun FeedScreen(navHostController: NavHostController) {
     Scaffold(topBar = { FeedAppBar() }, bottomBar = { FeedBottomBar() }) {
-        Column {
-            StoryUi()
-            PostListUi()
-            Spacer(Modifier.height(4.dp))
-            PostListUi()
-            Spacer(Modifier.height(4.dp))
-            PostListUi()
-            PostListUi()
+        val lazyColumnListState = rememberLazyListState()
+        val itemsList = (0..5).toList()
+        val itemsIndexedList = listOf("Your Story", "karenne", "zackjohn", "kieron_d", "crag_love", "John", "Wick")
+        LazyColumn (state = lazyColumnListState, modifier = Modifier.padding(bottom = 56.dp)) {
+            itemsIndexed(itemsIndexedList) { index, item ->
+                if(index == 0){
+                    StoryUi()
+                }else {
+                    PostListUi()
+                    Spacer(Modifier.height(4.dp))
+                }
+            }
         }
-
     }
 }
 

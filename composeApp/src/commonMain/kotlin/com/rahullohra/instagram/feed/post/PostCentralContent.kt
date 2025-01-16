@@ -50,15 +50,7 @@ fun PostCentralContent() {
             ) { page ->
                 AsyncImage(model = "https://picsum.photos/200/300", "hello",
                     modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.FillBounds,
-                    onError = {
-                        println("AsyncImage Error")
-                        it.result.throwable.printStackTrace()
-                    }, onLoading = {
-                        println("AsyncImage Loading image")
-                    }, onSuccess = {
-                        println("AsyncImage success image")
-                    })
+                    contentScale = ContentScale.FillBounds)
             }
 
             PostIndexIndicator(

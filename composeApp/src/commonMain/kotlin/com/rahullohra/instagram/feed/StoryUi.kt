@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.rahullohra.instagram.ColouredCircle
 import com.rahullohra.instagram.UserIcon
 import instagramclone.composeapp.generated.resources.Res
-import instagramclone.composeapp.generated.resources.man_user_circle_icon
 import instagramclone.composeapp.generated.resources.rectangle
 import org.jetbrains.compose.resources.painterResource
 
@@ -45,7 +43,7 @@ fun StoryUi() {
 }
 
 @Composable
-fun StoryListUi(index:Int, item:String) {
+private fun StoryListUi(index:Int, item:String) {
     val circleDimension = 63.dp
     val innerCircleDimension = circleDimension - 4.dp
     Column(horizontalAlignment = Alignment.CenterHorizontally,
