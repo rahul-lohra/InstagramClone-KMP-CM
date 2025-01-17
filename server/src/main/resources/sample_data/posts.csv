@@ -1,0 +1,3 @@
+id,user_id,content_type,content_url,caption,tags,created_at,visibility,is_active
+b3384f0c-81b9-4ab4-81a9-f393f935dbb9,b29e967a-866e-4c4f-80ca-fc537058819c,IMAGE,https://cdn.example.com/post1.jpg,My first post!,"[""first"", ""post""]",2025-01-16T21:24:39.390057Z,PUBLIC,True
+4c92f165-b143-419f-8e8b-eb1f3928130b,b29e967a-866e-4c4f-80ca-fc537058819c,VIDEO,https://cdn.example.com/post2.mp4,Check out this cool video!,"[""video"", ""fun""]",2025-01-16T21:24:39.390069Z,PUBLIC,True
