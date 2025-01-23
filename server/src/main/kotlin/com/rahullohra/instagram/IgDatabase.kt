@@ -1,10 +1,13 @@
 package com.rahullohra.instagram
 
-import com.rahullohra.instagram.feed.CommentsTable
+import com.rahullohra.instagram.auth.AuthTable
+import com.rahullohra.instagram.comment.CommentsTable
 import com.rahullohra.instagram.feed.FeedsTable
-import com.rahullohra.instagram.feed.LikesTable
-import com.rahullohra.instagram.feed.PostsTable
-import com.rahullohra.instagram.feed.UsersTable
+import com.rahullohra.instagram.follower.FollowersTable
+import com.rahullohra.instagram.like.LikesTable
+import com.rahullohra.instagram.media.MediaTable
+import com.rahullohra.instagram.post.PostsTable
+import com.rahullohra.instagram.user.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -45,11 +48,14 @@ object IgDatabase {
     }
 
     fun createTables() {
-        SchemaUtils.create(FeedsTable)
+        SchemaUtils.create(UsersTable)
+        SchemaUtils.create(AuthTable)
+        SchemaUtils.create(FollowersTable)
         SchemaUtils.create(PostsTable)
+        SchemaUtils.create(FeedsTable)
         SchemaUtils.create(LikesTable)
         SchemaUtils.create(CommentsTable)
-        SchemaUtils.create(UsersTable)
+        SchemaUtils.create(MediaTable)
     }
 
     fun insertTasks() {

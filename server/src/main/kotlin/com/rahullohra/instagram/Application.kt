@@ -1,22 +1,22 @@
 package com.rahullohra.instagram
 
-import com.rahullohra.instagram.feed.Feed
-import com.rahullohra.instagram.feed.FeedsTable
+import com.rahullohra.instagram.auth.AuthUtils
+import com.rahullohra.instagram.feed.feedRoutes
+import com.rahullohra.instagram.media.mediaRoutes
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.UUID
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
 fun main() {
 
     IgDatabase.setup()
-
+//    val v = getFeedsForUser(IgDatabase.database, "fe7c1599-fe1c-47c5-a4cd-381fe5700f51")
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 
@@ -31,46 +31,18 @@ fun Application.module() {
         get("/") {
             call.respondText("Ktor: ${Greeting().greet()}")
         }
-        get("/stories") {
-            call.respondText("Ktor: ${Greeting().greet()}")
-        }
-        get("/feeds/{userId}") {
-            val userId = call.parameters["userId"]
-            if (userId == null) {
-                call.respond(mapOf("error" to "User ID is required"))
-                return@get
-            }
 
-            // Fetch feeds for the user
-            val feeds = getFeedsForUser(IgDatabase.database, userId)
-            call.respond(feeds)
-        }
-        get("/feed") {
-            call.respondText("Ktor: ${Greeting().greet()}")
-        }
+        feedRoutes()
+        mediaRoutes()
     }
 }
 
-fun getFeedsForUser(database: Database, userId: String): List<FeedResponse> {
-    return transaction(database) {
-        // Fetch feeds for the user
-        Feed.find { FeedsTable.userId eq UUID.fromString(userId) }.map { feed ->
-            FeedResponse(
-                postId = feed.post.id.value.toString(),
-                contentUrl = feed.post.contentUrl,
-                caption = feed.post.caption ?: "",
-                tags = feed.post.tags ?: "[]",
-                createdAt = feed.post.createdAt.toString()
-            )
-        }
-    }
-}
+fun ApplicationCall.getUserId(): String {
+    val authHeader = request.headers["Authorization"]
+    val token = authHeader?.removePrefix("Bearer ")
 
-@Serializable
-data class FeedResponse(
-    val postId: String,
-    val contentUrl: String,
-    val caption: String,
-    val tags: String,
-    val createdAt: String
-)
+    if (token.isNullOrEmpty())
+        throw Exception("No token sent")
+    val userId = AuthUtils.getUserIdFromToken(token)
+    return userId
+}

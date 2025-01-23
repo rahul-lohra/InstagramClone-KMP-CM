@@ -1,17 +1,23 @@
 package com.rahullohra.instagram
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import com.rahullohra.instagram.feed.Comment
-import com.rahullohra.instagram.feed.ContentType
+import com.rahullohra.instagram.auth.Auth
+import com.rahullohra.instagram.auth.AuthTable.reference
+import com.rahullohra.instagram.auth.AuthTable.uniqueIndex
+import com.rahullohra.instagram.auth.AuthTable.varchar
+import com.rahullohra.instagram.comment.Comment
 import com.rahullohra.instagram.feed.Feed
-import com.rahullohra.instagram.feed.Follower
-import com.rahullohra.instagram.feed.Like
-import com.rahullohra.instagram.feed.Post
-import com.rahullohra.instagram.feed.User
-import com.rahullohra.instagram.feed.Visibility
+import com.rahullohra.instagram.follower.Follower
+import com.rahullohra.instagram.like.Like
+import com.rahullohra.instagram.post.ContentType
+import com.rahullohra.instagram.post.Post
+import com.rahullohra.instagram.post.Visibility
+import com.rahullohra.instagram.user.User
+import com.rahullohra.instagram.user.UsersTable
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
@@ -30,8 +36,20 @@ class Csv {
             User.new(UUID.fromString(row["id"])) {
                 username = row["username"]!!
                 email = row["email"]!!
-
                 createdAt = Instant.parse(row["created_at"]!!).toLocalDateTime(TimeZone.UTC)
+            }
+        }
+    }
+
+    fun insertAuth() {
+        val authCsv = readCsv("Auth.csv")
+        authCsv.forEach { row ->
+            Auth.new(UUID.fromString(row["id"])) {
+                user = User.findById(UUID.fromString(row["user_id"]))!!
+                token = row["token"]!!
+                refreshToken = row["refresh_token"]!!
+                createdAt = Instant.parse(row["created_at"]!!).toLocalDateTime(TimeZone.UTC)
+                expiryAt = Instant.parse(row["expiry_at"]!!).toLocalDateTime(TimeZone.UTC)
             }
         }
     }
@@ -41,8 +59,8 @@ class Csv {
         postsCsv.forEach { row ->
             Post.new(UUID.fromString(row["id"])) {
                 user = User.findById(UUID.fromString(row["user_id"]))!!
-                contentType = ContentType.valueOf(row["content_type"]!!)
-                contentUrl = row["content_url"]!!
+//                contentType = ContentType.valueOf(row["content_type"]!!)
+//                contentUrl = row["content_url"]!!
                 caption = row["caption"]
                 tags = row["tags"]
                 createdAt = Instant.parse(row["created_at"]!!).toLocalDateTime(TimeZone.UTC)
@@ -101,6 +119,12 @@ class Csv {
     fun populateDatabaseFromCsv() {
         transaction(IgDatabase.database) {
             insertUsers()
+            insertAuth()
+            insertFollowers()
+            insertPosts()
+            insertFeeds()
+            insertLikes()
+            insertComments()
         }
 
         println("Database successfully populated from CSV files.")
