@@ -1,15 +1,20 @@
 package com.rahullohra.instagram.post
 
-import com.rahullohra.instagram.ErrorResponse
-import com.rahullohra.instagram.IgDatabase
-import com.rahullohra.instagram.SuccessResponse
-import com.rahullohra.instagram.auth.AuthUtils
+import com.rahullohra.instagram.SuccessResponseMessage
+import com.rahullohra.instagram.TimeUtil
+import com.rahullohra.instagram.feed.Feed
+import com.rahullohra.instagram.feed.FeedResponse
+import com.rahullohra.instagram.getUserId
+import com.rahullohra.instagram.media.Media
+import com.rahullohra.instagram.media.MediaTable
+import com.rahullohra.instagram.user.User
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import java.util.UUID
 
 
 fun Routing.postRoutes() {
@@ -17,30 +22,34 @@ fun Routing.postRoutes() {
     post("/post/") {
         try {
             val request = call.receive<CreatePostRequest>()
+            val userId = call.getUserId()
 
-            val customHeader = call.request.headers["Custom-Header"]
-            val authHeader = call.request.headers["Authorization"]
-            val token = authHeader?.removePrefix("Bearer ")
-
-            if (token.isNullOrEmpty())
-                throw Exception("No token sent")
-
-            val userId = AuthUtils.getUserIdFromToken(token)
-            //First upload media and then upload post
-
-            // Simulate creating a post in the database
             val postId = createPostInDatabase(request, userId)
+            val user = User.findById(UUID.fromString(userId))!!
 
+            val post = Post.new {
+                this.user = user
+                this.caption = request.caption
+                this.createdAt = TimeUtil.getCurrentTime()
+                this.visibility = Visibility.PUBLIC
+                this.isActive = true
+            }
+            val feed = Feed.new {
+                this.post = post
+                this.user = user
+                this.rankingScore = 0.0f
+                this.createdAt = TimeUtil.getCurrentTime()
+            }
 
             // Respond with success
             call.respond(
                 HttpStatusCode.Created,
                 CreatePostResponse(
                     postId = postId,
-                    message = "Post created successfully!"
+                    message = "Post created successfully!",
                 )
             )
-            call.respond(status = HttpStatusCode.OK, "feeds")
+
         } catch (ex: Exception) {
             call.respond(
                 HttpStatusCode.BadRequest,
@@ -52,7 +61,7 @@ fun Routing.postRoutes() {
 //
     get("/post") {
         call.respond(
-            status = HttpStatusCode.OK, message = SuccessResponse(
+            status = HttpStatusCode.OK, message = SuccessResponseMessage(
                 "Hello instagram post"
             )
         )

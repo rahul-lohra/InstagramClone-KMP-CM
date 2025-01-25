@@ -2,7 +2,9 @@ package com.rahullohra.instagram.feed
 
 import com.rahullohra.instagram.ErrorResponse
 import com.rahullohra.instagram.IgDatabase
-import com.rahullohra.instagram.SuccessResponse
+import com.rahullohra.instagram.SuccessResponseMessage
+import com.rahullohra.instagram.post.Post
+import com.rahullohra.instagram.post.PostsTable
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Routing
@@ -29,9 +31,10 @@ fun Routing.feedRoutes() {
     }
 
     get("/feed") {
-        call.respond(status = HttpStatusCode.OK, message = SuccessResponse(
+        call.respond(status = HttpStatusCode.OK, message = SuccessResponseMessage(
             "Hello instagram feed"
-        ))
+        )
+        )
     }
 }
 
@@ -41,9 +44,7 @@ fun getFeedsForUser(database: Database, userId: String): List<FeedResponse> {
         Feed.find { FeedsTable.userId eq UUID.fromString(userId) }.map { feed ->
             FeedResponse(
                 postId = feed.post.id.value.toString(),
-//                contentUrl = feed.post.contentUrl,
-                caption = feed.post.caption ?: "",
-                tags = feed.post.tags ?: "[]",
+                media = emptyList(),
                 createdAt = feed.post.createdAt.toString()
             )
         }

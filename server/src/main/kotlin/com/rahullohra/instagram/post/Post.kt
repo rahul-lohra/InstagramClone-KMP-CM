@@ -1,5 +1,7 @@
 package com.rahullohra.instagram.post
 
+import com.rahullohra.instagram.feed.Feed
+import com.rahullohra.instagram.feed.FeedResponse
 import com.rahullohra.instagram.media.MediaItem
 import com.rahullohra.instagram.user.User
 import com.rahullohra.instagram.user.UsersTable
@@ -18,8 +20,6 @@ class Post(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<Post>(PostsTable)
 
     var user by User referencedOn PostsTable.userId // Reference to the User who created the post
-//    var contentType by PostsTable.contentType // ENUM type of the post (image, video, reel)
-//    var contentUrl by PostsTable.contentUrl // URL of the post content
     var caption by PostsTable.caption // Caption for the post
     var tags by PostsTable.tags // Tags associated with the post
     var createdAt by PostsTable.createdAt // Timestamp of when the post was created
@@ -29,8 +29,6 @@ class Post(id: EntityID<UUID>) : UUIDEntity(id) {
 
 object PostsTable : UUIDTable("posts") {
     val userId = reference("user_id", UsersTable) // FK to Users table
-//    val contentType = enumerationByName("content_type", 50, ContentType::class) // ENUM (image, video, reel)
-//    val contentUrl = text("content_url") // CDN URL
     val caption = text("caption").nullable() // Caption
     val tags = text("tags").nullable() // JSON/Array of tags
     val createdAt = datetime("created_at") // Timestamp
@@ -51,15 +49,15 @@ data class CreatePostRequest(
     val userId: String, // User ID creating the post
     val caption: String? = null,
     val location: String? = null,
-    val media: List<MediaItem>, // List of media items
+    val mediaIds: List<String>, // List of media items
     val tags: List<String>, // List of media items
     val visibility: Visibility // List of media items
 )
 
 @Serializable
 data class CreatePostResponse(
-    val postId: String, // ID of the created post
-    val message: String // Response message
+    val postId: String,
+    val message: String,
 )
 
 // Simulate a function to save the post to the database

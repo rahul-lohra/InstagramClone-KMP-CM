@@ -29,5 +29,11 @@ dependencies {
     implementation("com.h2database:h2:2.2.224")
     implementation("io.ktor:ktor-server-content-negotiation:3.0.2") // https://ktor.io/docs/client-serialization.html
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.2")
+    implementation("org.mindrot:jbcrypt:0.4")
+    implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.auth.jwt)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
 
 }

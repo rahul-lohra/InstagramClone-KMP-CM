@@ -18,7 +18,6 @@ class Auth(id: EntityID<UUID>) : UUIDEntity(id) {
     var token by AuthTable.token
     var refreshToken by AuthTable.refreshToken
     var createdAt by AuthTable.createdAt
-    var expiryAt by AuthTable.expiryAt
 }
 
 object AuthTable : UUIDTable("auth") {
@@ -26,7 +25,6 @@ object AuthTable : UUIDTable("auth") {
     val token = varchar("token", 255).uniqueIndex() // Email
     val refreshToken = varchar("refresh_token", 255).uniqueIndex() // Email
     val createdAt = datetime("created_at") // Timestamp
-    val expiryAt = datetime("expiry_at") // Timestamp
 }
 
 object AuthUtils{

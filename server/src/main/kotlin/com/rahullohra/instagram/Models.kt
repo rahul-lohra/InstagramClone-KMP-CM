@@ -10,6 +10,12 @@ data class ErrorResponse(
 )
 
 @Serializable
-data class SuccessResponse(
-    val message: String
-)
+class SuccessResponseObject<T>(
+    val message: String,
+    val data: T? = null
+) : SuccessResponse
+
+@Serializable
+class SuccessResponseMessage(val message: String) : SuccessResponse
+
+interface SuccessResponse

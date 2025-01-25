@@ -1,8 +1,11 @@
 package com.rahullohra.instagram
 
 import com.rahullohra.instagram.auth.AuthUtils
+import com.rahullohra.instagram.auth.authRoutes
 import com.rahullohra.instagram.feed.feedRoutes
 import com.rahullohra.instagram.media.mediaRoutes
+import com.rahullohra.instagram.post.postRoutes
+import com.rahullohra.instagram.sampledata.MediaDownloader
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -12,6 +15,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.runBlocking
 
 fun main() {
 
@@ -34,6 +38,9 @@ fun Application.module() {
 
         feedRoutes()
         mediaRoutes()
+        postRoutes()
+        authRoutes()
+
     }
 }
 

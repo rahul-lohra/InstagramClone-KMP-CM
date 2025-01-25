@@ -1,5 +1,6 @@
 package com.rahullohra.instagram.feed
 
+import com.rahullohra.instagram.media.MediaItem
 import com.rahullohra.instagram.post.Post
 import com.rahullohra.instagram.post.PostsTable
 import com.rahullohra.instagram.user.User
@@ -32,10 +33,9 @@ object FeedsTable : UUIDTable("feeds") {
 @Serializable
 data class FeedResponse(
     val postId: String,
-//    val contentUrl: String,
-    val caption: String,
-    val tags: String,
+    val media: List<MediaItem>,
     val createdAt: String
+
 )
 
 

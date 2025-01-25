@@ -1,7 +1,10 @@
 package com.rahullohra.instagram.media
 
 import com.rahullohra.instagram.ErrorResponse
+import com.rahullohra.instagram.MAX_VARCHAR_LENGTH
 import com.rahullohra.instagram.SuccessResponse
+import com.rahullohra.instagram.SuccessResponseObject
+import com.rahullohra.instagram.comment.Comment
 import com.rahullohra.instagram.getUserId
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -14,8 +17,11 @@ import io.ktor.server.response.respondFile
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import org.jetbrains.exposed.sql.insert
 import java.io.File
+import java.util.UUID
 
+const val parentDirPath = "/Users/rahullohra/IdeaProjects/InstagramClone/uploads"
 
 fun Routing.mediaRoutes() {
     // Upload Route
@@ -24,22 +30,27 @@ fun Routing.mediaRoutes() {
             val userId = call.getUserId()
             val multipartData = call.receiveMultipart()
 
-            val parentDirPath = "/Users/rahullohra/IdeaProjects/InstagramClone/uploads"
             val dir = File(parentDirPath)
             if (!dir.exists()) {
                 dir.mkdirs()
             }
-
+            val uploadedMediaList = mutableListOf<Media>()
             multipartData.forEachPart { part ->
                 if (part is PartData.FileItem) {
-                    val fileName = userId + "." + part.originalFileName
+                    val fileName = UUID.randomUUID().toString() + "." + part.originalFileName
                     val fileBytes = part.streamProvider().readBytes()
                     val file = File("$parentDirPath/$fileName")
                     file.writeBytes(fileBytes)
                     println("")
+                    val uploadedMedia = Media.new {
+                        this.mimeType = part.contentType.toString()
+                        this.fileName = fileName
+                    }
+                    uploadedMediaList.add(uploadedMedia)
                     call.respond(
-                        status = HttpStatusCode.OK, message = SuccessResponse(
-                            "File uploaded successfully: /uploads/$fileName"
+                        status = HttpStatusCode.OK, message = SuccessResponseObject(
+                            "File uploaded successfully: /uploads/$fileName",
+                            uploadedMediaList
                         )
                     )
                 }
@@ -70,7 +81,7 @@ fun Routing.mediaRoutes() {
             return@get
         }
 
-        val file = File("uploads/$fileName")
+        val file = File("$parentDirPath/$fileName")
         if (!file.exists()) {
             call.respond(
                 status = HttpStatusCode.NotFound,
