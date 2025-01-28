@@ -10,9 +10,11 @@ import com.rahullohra.instagram.like.Like
 import com.rahullohra.instagram.post.Post
 import com.rahullohra.instagram.post.Visibility
 import com.rahullohra.instagram.user.User
+import com.rahullohra.instagram.user.UsersTable
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
@@ -110,15 +112,17 @@ class Csv {
 
     fun populateDatabaseFromCsv() {
         transaction(IgDatabase.database) {
-            insertUsers()
-            insertAuth()
-            insertFollowers()
-            insertPosts()
-            insertFeeds()
-            insertLikes()
-            insertComments()
+            val emptyTables = UsersTable.selectAll().count().toInt()==0
+            if(emptyTables){
+                insertUsers()
+                insertAuth()
+                insertFollowers()
+                insertPosts()
+                insertFeeds()
+                insertLikes()
+                insertComments()
+            }
         }
-
         println("Database successfully populated from CSV files.")
     }
 }
