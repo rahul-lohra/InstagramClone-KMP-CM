@@ -7,6 +7,11 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+
+    //Network client
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktorfit)
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 kotlin {
@@ -36,10 +41,16 @@ kotlin {
             implementation(libs.coil.compose)
             implementation("com.google.accompanist:accompanist-systemuicontroller:0.36.0")
             implementation("io.ktor:ktor-client-android:3.0.3")
+
+            implementation("androidx.security:security-crypto:1.1.0-alpha06")
+            implementation ("androidx.datastore:datastore-preferences:1.1.2")
+            implementation("com.russhwolf:multiplatform-settings:1.3.0")
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.okhttp)
         }
         iosMain.dependencies {
             implementation(libs.coil.compose)
-            implementation("io.ktor:ktor-client-darwin:3.0.3")
+            implementation(libs.ktor.client.darwin)
         }
 
         commonMain.dependencies {
@@ -59,6 +70,34 @@ kotlin {
             implementation("com.squareup.okio:okio:3.10.2")
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
             implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
+
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.content.negotiation)
+
+            implementation(libs.client.ktorfit)
+
+            //key-value secure storage
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0") // JSON Serialization
+//            implementation("com.soywiz.korlibs.krypto:krypto:4.0.10") // AES Encryption
+            implementation("androidx.datastore:datastore-preferences-core:1.1.2")
+
+            val ktor_version = "3.0.2"
+            // https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-util
+            implementation(libs.ktor.client.core)
+//            implementation(libs.ktor.client.okhttp)
+//            implementation(libs.ktor.client.cio)
+
+//            implementation("io.ktor:ktor-client-core:$ktor_version")
+//            implementation("io.ktor:ktor-client-apache5:$ktor_version")
+//            implementation("io.ktor:ktor-client-java:$ktor_version")
+//            implementation("io.ktor:ktor-client-jetty:$ktor_version")
+//            implementation("org.eclipse.jetty:jetty-alpn-java-client:11.0.20")
+//            implementation("io.ktor:ktor-client-cio:$ktor_version")
+//            implementation("io.ktor:ktor-client-android:$ktor_version")
+//            implementation("io.ktor:ktor-client-okhttp:$ktor_version")
+
+
+
         }
     }
 }

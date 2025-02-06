@@ -1,4 +1,4 @@
-package com.rahullohra.instagram.auth
+package com.rahullohra.instagram.auth.ui
 
 import IgLogo
 import androidx.compose.foundation.border
@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -24,6 +26,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,17 +36,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
-import com.rahullohra.instagram.IgFilledButton
 import com.rahullohra.instagram.IgTextButton
+import com.rahullohra.instagram.LoadingButton
+import com.rahullohra.instagram.auth.data.AuthRepository
+import com.rahullohra.instagram.auth.data.local.AuthStore
+import com.rahullohra.instagram.network.authApiService
 import com.rahullohra.instagram.theme.md_theme_dark_navigation
 import com.rahullohra.instagram.theme.md_theme_dark_placeholder
 import com.rahullohra.instagram.theme.md_theme_light_navigation
 import com.rahullohra.instagram.theme.md_theme_light_placeholder
 import instagramclone.composeapp.generated.resources.Res
 import instagramclone.composeapp.generated.resources.arrow_back_ios
+import instagramclone.composeapp.generated.resources.eye_password_hide
+import instagramclone.composeapp.generated.resources.eye_password_show
 import instagramclone.composeapp.generated.resources.fb_logo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -51,20 +66,33 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun UsernamePasswordScreen(navController: NavHostController) {
+    val viewModel: UsernamePasswordViewmodel = viewModel(
+        key = UsernamePasswordViewmodel.KEY,
+        factory = viewModelFactory {
+            initializer {
+                UsernamePasswordViewmodel(AuthRepository(authApiService, AuthStore { "auth" }))
+            }
+        }
+    )
+
     Scaffold(topBar = {
-        TopAppBar(title = {}, backgroundColor = Color.Transparent, elevation = 0.dp, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }, content = {
-                val isLight = MaterialTheme.colors.isLight
-                val iconColor = if (isLight) {
-                    md_theme_light_navigation
-                } else {
-                    md_theme_dark_navigation
-                }
-                Icon(painterResource(Res.drawable.arrow_back_ios), null, tint = iconColor)
+        TopAppBar(
+            title = {},
+            backgroundColor = Color.Transparent,
+            elevation = 0.dp,
+            navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }, content = {
+                    val isLight = MaterialTheme.colors.isLight
+                    val iconColor = if (isLight) {
+                        md_theme_light_navigation
+                    } else {
+                        md_theme_dark_navigation
+                    }
+                    Icon(painterResource(Res.drawable.arrow_back_ios), null, tint = iconColor)
+                })
             })
-        })
     }) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -97,6 +125,14 @@ fun UsernamePasswordScreen(navController: NavHostController) {
 
 @Composable
 private fun LoginForm(modifier: Modifier) {
+
+    val viewModel: UsernamePasswordViewmodel = viewModel(key = UsernamePasswordViewmodel.KEY)
+
+//    val username = viewModel.username.collectAsState().value
+//    val password = viewModel.password.collectAsState().value
+//    by viewModel.enteredAmountFlow.collectAsState()
+    val loginUiState by viewModel.loginState.collectAsState()
+
     var userNameText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf(("")) }
 
@@ -105,20 +141,76 @@ private fun LoginForm(modifier: Modifier) {
             userNameText = it
         })
         Spacer(Modifier.height(12.dp))
-        UserNameField(passwordText, "Password", onValueChange = {
+        PasswordField(passwordText, "Password", onValueChange = {
             passwordText = it
         })
         Spacer(Modifier.height(19.dp))
         IgTextButton("Forgot password?", Modifier.align(Alignment.End), {})
         Spacer(Modifier.height(30.dp))
-        IgFilledButton(modifier, "Login")
+        ErrorUI(loginUiState)
+        LoadingButton(modifier, "Login", loginUiState == LoginUiState.Loading, onClick = {
+            viewModel.onLogin(userNameText, passwordText)
+        })
         Spacer(Modifier.height(37.dp))
         LoginWithFacebook(Modifier.align(Alignment.CenterHorizontally))
     }
 }
 
 @Composable
-fun UserNameField(text: String, placeholderText: String, onValueChange: (String) -> Unit) {
+fun ErrorUI(loginUiState: LoginUiState) {
+    if (loginUiState is LoginUiState.Fail) {
+        Text(
+            loginUiState.message,
+            fontSize = 14.sp,
+            color = Color.Red,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 10.dp).fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun PasswordField(
+    text: String,
+    placeholderText: String,
+    onValueChange: (String) -> Unit
+) {
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
+    val visualTransformation =
+        if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
+    val keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+
+    val trailingIcon = @Composable {
+        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = if (isPasswordVisible) painterResource(Res.drawable.eye_password_hide) else painterResource(
+                    Res.drawable.eye_password_show
+                ),
+                contentDescription = "Toggle Password Visibility"
+            )
+        }
+    }
+    UserNameField(
+        text,
+        placeholderText,
+        visualTransformation,
+        keyboardOptions,
+        trailingIcon,
+        onValueChange
+    )
+}
+
+@Composable
+fun UserNameField(
+    text: String,
+    placeholderText: String,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    onValueChange: (String) -> Unit
+) {
 
     val isLight = MaterialTheme.colors.isLight
     val roundShape = RoundedCornerShape(5.dp)
@@ -157,7 +249,11 @@ fun UserNameField(text: String, placeholderText: String, onValueChange: (String)
         singleLine = true,
         placeholder = {
             Text(text = placeholderText, color = placeholderColor)
-        }, value = text, onValueChange = onValueChange
+        },
+        value = text, onValueChange = onValueChange,
+        visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+        trailingIcon = trailingIcon
     )
 }
 
@@ -204,3 +300,4 @@ private fun SignUp(modifier: Modifier) {
         )
     }
 }
+

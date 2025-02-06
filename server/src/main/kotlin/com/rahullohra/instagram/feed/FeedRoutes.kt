@@ -1,10 +1,8 @@
 package com.rahullohra.instagram.feed
 
-import com.rahullohra.instagram.ErrorResponse
+
 import com.rahullohra.instagram.IgDatabase
-import com.rahullohra.instagram.SuccessResponseMessage
-import com.rahullohra.instagram.post.Post
-import com.rahullohra.instagram.post.PostsTable
+import com.rahullohra.instagram.models.ApiResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Routing
@@ -21,7 +19,12 @@ fun Routing.feedRoutes() {
         if (userId == null) {
             call.respond(
                 status = HttpStatusCode.NotFound,
-                ErrorResponse(HttpStatusCode.NotFound.value, "User ID is required")
+                ApiResponse(
+                    code = HttpStatusCode.NotFound.value,
+                    true,
+                    "User ID is required",
+                    Unit
+                )
             )
             return@get
         }
@@ -31,8 +34,11 @@ fun Routing.feedRoutes() {
     }
 
     get("/feed") {
-        call.respond(status = HttpStatusCode.OK, message = SuccessResponseMessage(
-            "Hello instagram feed"
+        call.respond(status = HttpStatusCode.OK, message = ApiResponse(
+            code = HttpStatusCode.OK.value,
+            success = true,
+            "Hello instagram feed",
+            data = Unit
         )
         )
     }

@@ -1,4 +1,4 @@
-package com.rahullohra.instagram.auth
+package com.rahullohra.instagram.auth.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter

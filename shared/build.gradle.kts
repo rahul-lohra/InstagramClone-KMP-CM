@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 kotlin {
@@ -23,6 +24,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
+            implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.2")
         }
     }
 }

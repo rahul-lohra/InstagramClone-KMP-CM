@@ -11,12 +11,12 @@ class UserCredentials(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<UserCredentials>(UserCredentialsTable)
 
     var username by UserCredentialsTable.username
-    var password by UserCredentialsTable.password
+    var hashedPassword by UserCredentialsTable.hashedPassword
     var createdAt by UserCredentialsTable.createdAt
 }
 
 object UserCredentialsTable : UUIDTable("credentials") {
-    val username = varchar("token", 255).uniqueIndex() // Email
-    val password = varchar("token", 255).uniqueIndex() // Email
+    val username = varchar("username", 255).uniqueIndex()
+    val hashedPassword = varchar("hashedPassword", 255).uniqueIndex()
     val createdAt = datetime("created_at")
 }

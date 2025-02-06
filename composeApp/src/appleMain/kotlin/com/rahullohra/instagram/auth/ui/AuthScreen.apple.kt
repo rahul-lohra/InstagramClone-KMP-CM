@@ -1,5 +1,4 @@
-package com.rahullohra.instagram.auth
-
+package com.rahullohra.instagram.auth.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
@@ -39,7 +38,7 @@ actual fun loadImageResource(name: String): Painter {
         ?: throw IllegalArgumentException("Image $name.$extension not found in bundle")
     val uiImage = UIImage.imageWithContentsOfFile(path) ?: error("Failed to load image from $path")
     return BitmapPainter(uiImage.toImageBitmap())
- ?: error("Image not found")
+        ?: error("Image not found")
 //    val image = Image.makeFromEncoded(uiImage.CGImage?.dataProvider?.data) ?: error("Failed to create Image")
 //    return image.asImageBitmap()
 }

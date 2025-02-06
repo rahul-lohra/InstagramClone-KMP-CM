@@ -1,4 +1,4 @@
-package com.rahullohra.instagram.auth
+package com.rahullohra.instagram.auth.ui
 
 import IgLogo
 import androidx.compose.foundation.Image

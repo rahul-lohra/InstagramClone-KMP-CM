@@ -16,8 +16,8 @@ import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.svg.SvgDecoder
-import com.rahullohra.instagram.auth.AuthScreen
-import com.rahullohra.instagram.auth.UsernamePasswordScreen
+import com.rahullohra.instagram.auth.ui.AuthScreen
+import com.rahullohra.instagram.auth.ui.UsernamePasswordScreen
 import com.rahullohra.instagram.feed.FeedScreen
 import com.rahullohra.instagram.theme.IgTheme
 import org.jetbrains.compose.resources.painterResource
@@ -43,7 +43,7 @@ fun App() {
     IgTheme {
         Scaffold() {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = InstagramScreens.Feed.title){
+            NavHost(navController = navController, startDestination = InstagramScreens.UserNamePassword.title){
                 composable(route = InstagramScreens.Auth.title) {
                     AuthScreen(onSwitchAccountClick = {
                         navController.navigate(InstagramScreens.UserNamePassword.title)

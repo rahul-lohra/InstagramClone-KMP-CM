@@ -22,6 +22,8 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.FileInputStream
+import java.security.KeyStore
 
 
 fun main() {
@@ -40,16 +42,30 @@ fun main() {
 
 }
 
-private fun ApplicationEngine.Configuration.envConfig() {
+private fun ApplicationEngine.Configuration.envConfig(createNew: Boolean = false) {
 
-    val keyStoreFile = File("build/keystore.jks")
-    val keyStore = buildKeyStore {
-        certificate("sampleAlias") {
-            password = "foobar"
-            domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
+    val keyStore: KeyStore
+    val keyStoreFile = File("ssl/ssl_keystore.jks")
+    if (!keyStoreFile.exists()) {
+        keyStore = buildKeyStore {
+            certificate("sampleAlias") {
+                password = "foobar"
+                domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
+            }
         }
+        keyStore.saveToFile(keyStoreFile, "123456")
+    } else {
+        keyStore = KeyStore.getInstance("JKS").apply {
+            FileInputStream(keyStoreFile).use { load(it, "123456".toCharArray()) }
+        }
+//        keyStore = buildKeyStore {
+//            certificate("sampleAlias") {
+//                password = "foobar"
+//                domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
+//            }
+//        }
     }
-    keyStore.saveToFile(keyStoreFile, "123456")
+
 
     connector {
         port = SERVER_PORT
@@ -92,3 +108,7 @@ fun ApplicationCall.getUserId(): String {
     val userId = AuthUtils.getUserIdFromToken(token)
     return userId
 }
+
+
+private fun getResource(fileName: String) = object {}.javaClass.getResource("/$fileName")
+    ?: throw IllegalArgumentException("Resource not found: /$fileName")

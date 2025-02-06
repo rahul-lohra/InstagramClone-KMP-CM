@@ -2,7 +2,6 @@ id,username,email,created_at
 b29e967a-866e-4c4f-80ca-fc537058819c,john_doe,john.doe@example.com,2025-01-16T21:24:39.389747Z
 fe7c1599-fe1c-47c5-a4cd-381fe5700f51,jane_doe,jane.doe@example.com,2025-01-16T21:24:39.389789Z
 958e1d49-ca50-4bfb-8ade-a7bc29109324,alex_smith,alex.smith@example.com,2025-01-16T21:24:39.389807Z
-bc1dad06-e97f-478e-9674-40b5aad6480b,rahul,rahul.kumar@example.com,2025-01-17T21:24:39.389807Z
 6c247e72-521f-48e3-94c6-a53817559f1b,picka,pika.poke@example.com,2025-01-18T21:24:39.389807Z
 bf069fba-8eb1-4745-8037-55c0f43ad86b,dragon,dragon.fire@example.com,2024-01-16T21:24:39.389807Z
 12a56a80-8c7c-4472-b97c-1e21b8659a9e,bubble,bubble.waters@example.com,2024-01-11T21:24:39.389807Z

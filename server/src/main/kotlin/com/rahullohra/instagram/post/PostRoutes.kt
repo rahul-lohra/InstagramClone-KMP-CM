@@ -1,12 +1,9 @@
 package com.rahullohra.instagram.post
 
-import com.rahullohra.instagram.SuccessResponseMessage
 import com.rahullohra.instagram.TimeUtil
 import com.rahullohra.instagram.feed.Feed
-import com.rahullohra.instagram.feed.FeedResponse
 import com.rahullohra.instagram.getUserId
-import com.rahullohra.instagram.media.Media
-import com.rahullohra.instagram.media.MediaTable
+import com.rahullohra.instagram.models.ApiResponse
 import com.rahullohra.instagram.user.User
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
@@ -49,21 +46,18 @@ fun Routing.postRoutes() {
                     message = "Post created successfully!",
                 )
             )
-
         } catch (ex: Exception) {
             call.respond(
                 HttpStatusCode.BadRequest,
                 mapOf("error" to ex.message)
             )
         }
-
     }
-//
+
     get("/post") {
         call.respond(
-            status = HttpStatusCode.OK, message = SuccessResponseMessage(
-                "Hello instagram post"
-            )
+            status = HttpStatusCode.OK,
+            message = ApiResponse(HttpStatusCode.OK.value, true, "Hello instagram post", Unit)
         )
     }
 }

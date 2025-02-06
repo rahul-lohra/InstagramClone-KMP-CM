@@ -2,6 +2,7 @@ package com.rahullohra.instagram
 
 import com.rahullohra.instagram.auth.AuthTable
 import com.rahullohra.instagram.comment.CommentsTable
+import com.rahullohra.instagram.credentials.UserCredentialsTable
 import com.rahullohra.instagram.feed.FeedsTable
 import com.rahullohra.instagram.follower.FollowersTable
 import com.rahullohra.instagram.like.LikesTable
@@ -93,6 +94,7 @@ object IgDatabase {
             //Ignore
         }
 
+        SchemaUtils.create(UserCredentialsTable)
         SchemaUtils.create(UsersTable)
         SchemaUtils.create(AuthTable)
         SchemaUtils.create(FollowersTable)

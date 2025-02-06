@@ -5,7 +5,15 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.rahullohra.instagram.TimeUtil
 import com.rahullohra.instagram.credentials.UserCredentials
 import com.rahullohra.instagram.credentials.UserCredentialsTable
+import com.rahullohra.instagram.models.ApiResponse
+import com.rahullohra.instagram.models.auth.AuthResponse
+import com.rahullohra.instagram.models.auth.LoginRequest
+import com.rahullohra.instagram.models.auth.LoginResponse
+import com.rahullohra.instagram.models.auth.RefreshTokenRequest
+import com.rahullohra.instagram.models.auth.RefreshTokenResponse
+import com.rahullohra.instagram.models.auth.RegisterRequest
 import com.rahullohra.instagram.user.User
+import com.rahullohra.instagram.user.UsersTable
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -31,42 +39,96 @@ fun Routing.authRoutes() {
     post("/auth/register") {
         val registerRequest = call.receive<RegisterRequest>()
         val username = registerRequest.username
-        val password = registerRequest.password
-        val hashedPassword = hashPassword(password)
+        val plainPassword = registerRequest.password
+        val hashedPassword = hashPassword(plainPassword)
         val currentTime = TimeUtil.getCurrentTime()
 
-        UserCredentials.new {
-            this.username = username
-            this.password = hashedPassword
-            this.createdAt = currentTime
+        //Check if username exists
+        val existingUser = transaction {
+            User.find { UsersTable.username eq username }.singleOrNull()
         }
+        if (existingUser != null) {
 
-        val user = User.new {
-         this.username = username
-         this.createdAt = currentTime
-        }
+            if (!authenticateUser(username, plainPassword)) {
+                call.respond(
+                    HttpStatusCode.Unauthorized, ApiResponse<Nothing>(
+                        code = HttpStatusCode.Unauthorized.value,
+                        success = false,
+                        message = "Authentication failed, Invalid username or password",
+                    )
+                )
+            } else {
+                val auth = generateUser(username)
+                call.respond(
+                    HttpStatusCode.OK, ApiResponse(
+                        HttpStatusCode.OK.value,
+                        success = true,
+                        message = "Authentication success",
+                        data = LoginResponse(username, auth.token, auth.refreshToken, 0L, 0L)
+                    )
+                )
+            }
+        } else {
+            val authResponse = transaction {
+                UserCredentials.new {
+                    this.username = username
+                    this.hashedPassword = hashedPassword
+                    this.createdAt = currentTime
+                }
 
-        val auth = Auth.new {
-            this.user = user
-            this.createdAt = currentTime
-            this.token = generateAccessToken(user.id.toString())
-            this.refreshToken = generateRefreshToken(user.id.toString())
+                val user = User.new {
+                    this.username = username
+                    this.createdAt = currentTime
+                    email = "null" // exposed does not support null
+                }
+
+                val auth = Auth.new {
+                    this.user = user
+                    this.createdAt = currentTime
+                    this.token = generateAccessToken(user.id.toString())
+                    this.refreshToken = generateRefreshToken(user.id.toString())
+                }
+                return@transaction AuthResponse(user.id.toString(), auth.token, auth.refreshToken)
+            }
+
+            call.respond(
+                status = HttpStatusCode.OK,
+                ApiResponse(
+                    HttpStatusCode.OK.value,
+                    true,
+                    "Registration successful",
+                    authResponse
+                )
+            )
         }
-        call.respond(status = HttpStatusCode.OK,AuthResponse(user.id.toString(), auth.token, auth.refreshToken))
     }
 
     post("/auth/login") {
         val loginRequest = call.receive<LoginRequest>()
         val username = loginRequest.username
-        val password = loginRequest.password
-        val hashedPassword = hashPassword(password)
+        val plainPassword = loginRequest.password
 
-        if (authenticateUser(username, hashedPassword)){
-            call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
-        }else {
-            call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
+        if (!authenticateUser(username, plainPassword)) {
+            call.respond(
+                HttpStatusCode.Unauthorized, ApiResponse<Nothing>(
+                    code = HttpStatusCode.Unauthorized.value,
+                    success = false,
+                    message = "Authentication failed, invalid username or password",
+                )
+            )
+            return@post
+
+        } else {
+            val auth = generateUser(username)
+            call.respond(
+                HttpStatusCode.OK, ApiResponse(
+                    code = HttpStatusCode.OK.value,
+                    success = true,
+                    message = "Authentication success",
+                    data = LoginResponse(username, auth.token, auth.refreshToken, 0L, 0L)
+                )
+            )
         }
-
     }
 
     post("/auth/refresh_token") {
@@ -105,6 +167,19 @@ fun Routing.authRoutes() {
     }
 }
 
+fun generateUser(username: String): Auth {
+    return transaction {
+        val user = User.find { UsersTable.username eq username }.single()
+        val currentTime = TimeUtil.getCurrentTime()
+        Auth.new {
+            this.user = user
+            this.createdAt = currentTime
+            this.token = generateAccessToken(user.id.toString())
+            this.refreshToken = generateRefreshToken(user.id.toString())
+        }
+    }
+}
+
 fun hashPassword(password: String): String {
     return BCrypt.hashpw(password, BCrypt.gensalt())
 }
@@ -132,10 +207,10 @@ fun generateRefreshToken(userId: String): String {
         .sign(Algorithm.HMAC256(REFRESH_TOKEN_SECRET))
 }
 
-fun authenticateUser(username: String, password: String): Boolean {
+fun authenticateUser(username: String, plainPassword: String): Boolean {
     return transaction {
         val user = UserCredentials.find { UserCredentialsTable.username eq username }.singleOrNull()
-        if (user != null && BCrypt.checkpw(password, user.password)) {
+        if (user != null && BCrypt.checkpw(plainPassword, user.hashedPassword)) {
             // Authentication successful
             true
         } else {
@@ -145,10 +220,5 @@ fun authenticateUser(username: String, password: String): Boolean {
     }
 }
 
-data class AuthResponse(val userId: String, val accessToken: String, val refreshToken: String)
 
-data class RefreshTokenRequest(val refreshToken: String)
-data class RefreshTokenResponse(val accessToken:String, val refreshToken: String)
 
-data class RegisterRequest(val username: String, val password: String)
-data class LoginRequest(val username: String, val password: String)
