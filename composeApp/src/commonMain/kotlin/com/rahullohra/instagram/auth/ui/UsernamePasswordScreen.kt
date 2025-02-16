@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import com.rahullohra.instagram.IgTextButton
+import com.rahullohra.instagram.InstagramScreens
 import com.rahullohra.instagram.LoadingButton
 import com.rahullohra.instagram.auth.data.AuthRepository
 import com.rahullohra.instagram.auth.data.local.AuthStore
@@ -66,72 +67,84 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun UsernamePasswordScreen(navController: NavHostController) {
+    val authStore =  remember { AuthStore { "auth" }  }
     val viewModel: UsernamePasswordViewmodel = viewModel(
         key = UsernamePasswordViewmodel.KEY,
         factory = viewModelFactory {
             initializer {
-                UsernamePasswordViewmodel(AuthRepository(authApiService, AuthStore { "auth" }))
+                UsernamePasswordViewmodel(AuthRepository(authApiService, authStore))
             }
         }
     )
-
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {},
-            backgroundColor = Color.Transparent,
-            elevation = 0.dp,
-            navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }, content = {
-                    val isLight = MaterialTheme.colors.isLight
-                    val iconColor = if (isLight) {
-                        md_theme_light_navigation
-                    } else {
-                        md_theme_dark_navigation
-                    }
-                    Icon(painterResource(Res.drawable.arrow_back_ios), null, tint = iconColor)
+    val authState = authStore.getCredentials().collectAsState(null)
+    if(authState.value != null){
+        navController.navigate(InstagramScreens.Feed.title) {
+            popUpTo(0) { inclusive = true }
+        }
+    }else{
+        Scaffold(topBar = {
+            TopAppBar(
+                title = {},
+                backgroundColor = Color.Transparent,
+                elevation = 0.dp,
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }, content = {
+                        val isLight = MaterialTheme.colors.isLight
+                        val iconColor = if (isLight) {
+                            md_theme_light_navigation
+                        } else {
+                            md_theme_dark_navigation
+                        }
+                        Icon(painterResource(Res.drawable.arrow_back_ios), null, tint = iconColor)
+                    })
                 })
-            })
-    }) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(modifier = Modifier.align(Alignment.Center)) {
+        }) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(modifier = Modifier.align(Alignment.Center)) {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        IgLogo()
+                        Spacer(Modifier.height(39.dp))
+                        LoginForm(Modifier.padding(horizontal = 16.dp), navController)
+                        OrDivider(Modifier.padding(top = 41.5.dp, start = 16.dp, end = 16.dp))
+                        SignUp(Modifier.padding(top = 41.5.dp))
+                    }
+                }
                 Column(
-                    modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
+                    modifier = Modifier.align(Alignment.BottomEnd),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    IgLogo()
-                    Spacer(Modifier.height(39.dp))
-                    LoginForm(Modifier.padding(horizontal = 16.dp))
-                    OrDivider(Modifier.padding(top = 41.5.dp, start = 16.dp, end = 16.dp))
-                    SignUp(Modifier.padding(top = 41.5.dp))
+                    Divider(Modifier.height(0.4.dp))
+                    Spacer(modifier = Modifier.height(32.5.dp))
+                    Text("Instagram from Facebook", color = MaterialTheme.colors.onSurface)
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
-            }
-            Column(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Divider(Modifier.height(0.4.dp))
-                Spacer(modifier = Modifier.height(32.5.dp))
-                Text("Instagram from Facebook", color = MaterialTheme.colors.onSurface)
-                Spacer(modifier = Modifier.height(4.dp))
             }
         }
     }
 
+
+
+
 }
 
 @Composable
-private fun LoginForm(modifier: Modifier) {
+private fun LoginForm(modifier: Modifier, navController: NavHostController) {
 
     val viewModel: UsernamePasswordViewmodel = viewModel(key = UsernamePasswordViewmodel.KEY)
 
-//    val username = viewModel.username.collectAsState().value
-//    val password = viewModel.password.collectAsState().value
-//    by viewModel.enteredAmountFlow.collectAsState()
     val loginUiState by viewModel.loginState.collectAsState()
+    if (loginUiState is LoginUiState.Success) {
+        navController.navigate(InstagramScreens.Feed.title) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
 
     var userNameText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf(("")) }

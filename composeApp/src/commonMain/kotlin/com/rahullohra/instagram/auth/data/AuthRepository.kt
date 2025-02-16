@@ -4,6 +4,7 @@ import com.rahullohra.instagram.auth.data.local.AuthStore
 import com.rahullohra.instagram.auth.data.remote.AuthApiService
 import com.rahullohra.instagram.auth.data.remote.LoginRequest
 import com.rahullohra.instagram.models.ApiResponse
+import com.rahullohra.instagram.models.auth.LoginResponse
 import com.rahullohra.instagram.network.DataLayerResponse
 
 
@@ -12,7 +13,7 @@ class AuthRepository(
     private val authStorage: AuthStore,
 ) {
 
-    suspend fun signup(username: String, password: String): DataLayerResponse<SignUpResponse> {
+    suspend fun signup(username: String, password: String): DataLayerResponse<LoginResponse> {
         val response = safeApiCall { authApiService.signup(username, password) }
         when (response) {
 
@@ -30,10 +31,12 @@ class AuthRepository(
         return response
     }
 
-    suspend fun login(username: String, password: String): DataLayerResponse<SignUpResponse> {
+    suspend fun login(username: String, password: String): DataLayerResponse<LoginResponse> {
         try {
 
-            val response = safeApiCall { authApiService.login(LoginRequest(username, password)) }
+            val response = safeApiCall {
+                authApiService.login(LoginRequest(username, password))
+            }
             when (response) {
                 is DataLayerResponse.Success -> {
                     authStorage.storeCredentials(
@@ -57,12 +60,11 @@ class AuthRepository(
     suspend fun <T> safeApiCall(apiCall: suspend () -> ApiResponse<T>): DataLayerResponse<T> {
         return try {
             val response = apiCall()
-//            if(response.data!=null){
-//                DataLayerResponse.Success(response.data!!) // Wrap successful response
-//            }else {
-//                DataLayerResponse.Success(response.data!!)
-//            }
-            DataLayerResponse.Success(response.data!!) // Wrap successful response
+            if(response.data!=null){
+                DataLayerResponse.Success(response.data!!) // Wrap successful response
+            }else {
+                DataLayerResponse.Error<T>(response.message)
+            }
         } catch (e: Exception) {
             DataLayerResponse.Error(e.message ?: "Unknown error") // Handle errors
         }

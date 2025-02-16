@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.okio.OkioSerializer
 import androidx.datastore.core.okio.OkioStorage
 import com.rahullohra.instagram.auth.data.UserAuth
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 import okio.BufferedSink
 import okio.BufferedSource
@@ -14,11 +15,12 @@ import okio.SYSTEM
 class AuthStore (private val produceFilePath: () -> String) {
 
     private val db = DataStoreFactory.create(
+
         storage = OkioStorage<UserAuth>(
             fileSystem = FileSystem.SYSTEM,
             serializer = AuthJsonSerializer,
             producePath = {
-                produceFilePath().toPath()
+                getFilePath(produceFilePath()).toPath()
             },
         ),
     )
@@ -27,6 +29,10 @@ class AuthStore (private val produceFilePath: () -> String) {
         db.updateData {
             userAuth
         }
+    }
+
+    fun getCredentials(): Flow<UserAuth> {
+        return db.data
     }
 }
 
