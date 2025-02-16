@@ -17,11 +17,14 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.rahullohra.instagram.InstagramScreens
+import com.rahullohra.instagram.auth.data.local.AuthStore
 import com.rahullohra.instagram.feed.post.PostListUi
 import instagramclone.composeapp.generated.resources.Res
 import instagramclone.composeapp.generated.resources.camera
@@ -31,11 +34,15 @@ import instagramclone.composeapp.generated.resources.igtv
 import instagramclone.composeapp.generated.resources.messanger
 import instagramclone.composeapp.generated.resources.search
 import instagramclone.composeapp.generated.resources.story
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun FeedScreen(navHostController: NavHostController) {
-    Scaffold(topBar = { FeedAppBar() }, bottomBar = { FeedBottomBar() }) {
+fun FeedScreen(navController: NavHostController, authStore: AuthStore) {
+    Scaffold(
+        topBar = { FeedAppBar(navController) },
+        bottomBar = { FeedBottomBar(navController, authStore) }) {
         val lazyColumnListState = rememberLazyListState()
         val itemsList = (0..5).toList()
         val itemsIndexedList = listOf("Your Story", "karenne", "zackjohn", "kieron_d", "crag_love", "John", "Wick")
@@ -53,7 +60,7 @@ fun FeedScreen(navHostController: NavHostController) {
 }
 
 @Composable
-fun FeedAppBar() {
+fun FeedAppBar(navController: NavHostController) {
     TopAppBar(title = {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             IgLogo()
@@ -79,7 +86,7 @@ fun FeedAppBar() {
 }
 
 @Composable
-fun FeedBottomBar() {
+fun FeedBottomBar(navController: NavHostController, authStore: AuthStore) {
     BottomNavigation(backgroundColor = Color.Transparent, elevation = 0.dp) {
         BottomNavigationItem(selected = true, icon = {
             Icon(painterResource(Res.drawable.home_filled), null)
@@ -92,6 +99,20 @@ fun FeedBottomBar() {
         }, onClick = {})
         BottomNavigationItem(selected = false, icon = {
             Icon(painterResource(Res.drawable.heart), null)
-        }, onClick = {})
+        }, onClick = {
+            performLogout(authStore, navController)
+        })
+    }
+}
+
+fun performLogout(authStore: AuthStore, navController: NavHostController) {
+    //Clear the session
+    GlobalScope.run {
+        launch {
+            authStore.resetCredentials()
+        }
+    }
+    navController.navigate(InstagramScreens.UserNamePassword.title) {
+        popUpTo(0) { inclusive = true }
     }
 }
