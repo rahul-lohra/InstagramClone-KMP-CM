@@ -1,8 +1,5 @@
 package com.rahullohra.instagram.post
 
-import com.rahullohra.instagram.feed.Feed
-import com.rahullohra.instagram.feed.FeedResponse
-import com.rahullohra.instagram.media.MediaItem
 import com.rahullohra.instagram.user.User
 import com.rahullohra.instagram.user.UsersTable
 import kotlinx.datetime.Clock
@@ -25,6 +22,8 @@ class Post(id: EntityID<UUID>) : UUIDEntity(id) {
     var createdAt by PostsTable.createdAt // Timestamp of when the post was created
     var visibility by PostsTable.visibility // ENUM for visibility (public, private)
     var isActive by PostsTable.isActive // Soft delete flag
+    var location by PostsTable.location
+    var postDescription by PostsTable.postDescription
 }
 
 object PostsTable : UUIDTable("posts") {
@@ -34,6 +33,8 @@ object PostsTable : UUIDTable("posts") {
     val createdAt = datetime("created_at") // Timestamp
     val visibility = enumerationByName("visibility", 10, Visibility::class) // ENUM (public, private)
     val isActive = bool("is_active").default(true) // Soft delete flag
+    val location = varchar("location", 255).nullable()
+    val postDescription = text("post_description").nullable()
 }
 
 enum class ContentType {
@@ -51,7 +52,8 @@ data class CreatePostRequest(
     val location: String? = null,
     val mediaIds: List<String>, // List of media items
     val tags: List<String>, // List of media items
-    val visibility: Visibility // List of media items
+    val visibility: Visibility, // List of media items
+    val description: String? = null
 )
 
 @Serializable
@@ -74,6 +76,8 @@ fun createPostInDatabase(request: CreatePostRequest, userId: String): String {
         createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         visibility = request.visibility
         isActive = false // will be active when media is also uploaded
+        location = "New Delhi, India"
+        postDescription = request.description
     }
     return postId
 }

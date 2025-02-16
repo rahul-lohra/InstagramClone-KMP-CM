@@ -19,20 +19,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rahullohra.instagram.UserIcon
+import com.rahullohra.instagram.feed.FeedResponseItem
 import instagramclone.composeapp.generated.resources.Res
 import instagramclone.composeapp.generated.resources.more_icon
 import instagramclone.composeapp.generated.resources.official_icon
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun PostListUi() {
-    Column {
-        Box(modifier = Modifier.padding(start = 10.dp, top = 11.dp, bottom = 11.dp, end = 15.dp)) {
-            PostTopBar("karenne", "Nairobi, Kenya", true)
+fun PostListUi(feedResponseItem: FeedResponseItem) {
+    with(feedResponseItem) {
+        Column {
+            Box(modifier = Modifier.padding(start = 10.dp, top = 11.dp, bottom = 11.dp, end = 15.dp)) {
+                PostTopBar(userName, postLocation, isUserVerified)
+            }
+            PostCentralContent()
+            PostBottomBar(Modifier.padding(start = 15.dp, end = 15.dp, top = 14.dp),
+                likesCount, userName, postDescription)
         }
-        PostCentralContent()
-        PostBottomBar(Modifier.padding(start = 15.dp, end = 15.dp, top = 14.dp),
-            "148,000", "karenne", "Sharing the beautiful weather from Tokyo")
     }
 }
 

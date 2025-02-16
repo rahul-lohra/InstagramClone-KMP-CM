@@ -56,6 +56,7 @@ import com.rahullohra.instagram.theme.md_theme_dark_navigation
 import com.rahullohra.instagram.theme.md_theme_dark_placeholder
 import com.rahullohra.instagram.theme.md_theme_light_navigation
 import com.rahullohra.instagram.theme.md_theme_light_placeholder
+import com.rahullohra.instagram.ui.showToast
 import instagramclone.composeapp.generated.resources.Res
 import instagramclone.composeapp.generated.resources.arrow_back_ios
 import instagramclone.composeapp.generated.resources.eye_password_hide
@@ -66,8 +67,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun UsernamePasswordScreen(navController: NavHostController) {
-    val authStore =  remember { AuthStore { "auth" }  }
+fun UsernamePasswordScreen(navController: NavHostController, authStore: AuthStore) {
     val viewModel: UsernamePasswordViewmodel = viewModel(
         key = UsernamePasswordViewmodel.KEY,
         factory = viewModelFactory {
@@ -77,7 +77,8 @@ fun UsernamePasswordScreen(navController: NavHostController) {
         }
     )
     val authState = authStore.getCredentials().collectAsState(null)
-    if(authState.value != null){
+    val isLoggedIn = authState.value?.token?.isEmpty() == false
+    if(isLoggedIn){
         navController.navigate(InstagramScreens.Feed.title) {
             popUpTo(0) { inclusive = true }
         }
@@ -296,9 +297,10 @@ private fun OrDivider(modifier: Modifier = Modifier) {
 
 @Composable
 private fun SignUp(modifier: Modifier) {
+
     Row(modifier = modifier
         .clickable {
-
+            showToast("Just Login")
         }) {
         Text(
             "Don't have an account?", fontSize = 14.sp,

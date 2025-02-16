@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.svg.SvgDecoder
+import com.rahullohra.instagram.auth.data.local.AuthStore
 import com.rahullohra.instagram.auth.ui.AuthScreen
 import com.rahullohra.instagram.auth.ui.UsernamePasswordScreen
 import com.rahullohra.instagram.feed.FeedScreen
@@ -42,6 +43,7 @@ fun App() {
 
     IgTheme {
         Scaffold() {
+            val authStore =  remember("auth_store") { AuthStore { "auth" }  }
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = InstagramScreens.UserNamePassword.title){
                 composable(route = InstagramScreens.Auth.title) {
@@ -50,10 +52,10 @@ fun App() {
                     })
                 }
                 composable(route = InstagramScreens.UserNamePassword.title) {
-                    UsernamePasswordScreen(navController)
+                    UsernamePasswordScreen(navController, authStore)
                 }
                 composable(route = InstagramScreens.Feed.title) {
-                    FeedScreen(navController)
+                    FeedScreen(navController, authStore)
                 }
             }
         }

@@ -47,6 +47,9 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings:1.3.0")
             implementation(libs.ktor.client.okhttp)
             implementation(libs.okhttp)
+            implementation(libs.androidx.paging.runtime)
+            implementation(libs.androidx.paging.compose)
+
         }
         iosMain.dependencies {
             implementation(libs.coil.compose)
@@ -78,26 +81,14 @@ kotlin {
 
             //key-value secure storage
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0") // JSON Serialization
-//            implementation("com.soywiz.korlibs.krypto:krypto:4.0.10") // AES Encryption
+
             implementation("androidx.datastore:datastore-preferences-core:1.1.2")
+            implementation(libs.kotlinx.datetime)
 
-            val ktor_version = "3.0.2"
-            // https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-util
             implementation(libs.ktor.client.core)
-//            implementation(libs.ktor.client.okhttp)
-//            implementation(libs.ktor.client.cio)
 
-//            implementation("io.ktor:ktor-client-core:$ktor_version")
-//            implementation("io.ktor:ktor-client-apache5:$ktor_version")
-//            implementation("io.ktor:ktor-client-java:$ktor_version")
-//            implementation("io.ktor:ktor-client-jetty:$ktor_version")
-//            implementation("org.eclipse.jetty:jetty-alpn-java-client:11.0.20")
-//            implementation("io.ktor:ktor-client-cio:$ktor_version")
-//            implementation("io.ktor:ktor-client-android:$ktor_version")
-//            implementation("io.ktor:ktor-client-okhttp:$ktor_version")
-
-
-
+//            implementation(libs.androidx.paging.runtime)
+            implementation(libs.androidx.paging.common)
         }
     }
 }

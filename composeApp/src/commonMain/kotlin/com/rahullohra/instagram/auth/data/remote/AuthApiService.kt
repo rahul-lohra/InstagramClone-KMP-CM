@@ -1,6 +1,5 @@
 package com.rahullohra.instagram.auth.data.remote
 
-import com.rahullohra.instagram.auth.data.SignUpResponse
 import com.rahullohra.instagram.models.ApiResponse
 import com.rahullohra.instagram.models.auth.LoginResponse
 import de.jensklingenberg.ktorfit.http.Body

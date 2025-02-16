@@ -12,7 +12,7 @@ import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
 
-class AuthStore (private val produceFilePath: () -> String) {
+class AuthStore(private val produceFilePath: () -> String) {
 
     private val db = DataStoreFactory.create(
 
@@ -25,7 +25,7 @@ class AuthStore (private val produceFilePath: () -> String) {
         ),
     )
 
-    suspend fun storeCredentials(userAuth: UserAuth){
+    suspend fun storeCredentials(userAuth: UserAuth) {
         db.updateData {
             userAuth
         }
@@ -34,10 +34,16 @@ class AuthStore (private val produceFilePath: () -> String) {
     fun getCredentials(): Flow<UserAuth> {
         return db.data
     }
+
+    suspend fun resetCredentials() {
+        db.updateData {
+            UserAuth("", "")
+        }
+    }
 }
 
 internal object AuthJsonSerializer : OkioSerializer<UserAuth> {
-    override val defaultValue: UserAuth = UserAuth("","")
+    override val defaultValue: UserAuth = UserAuth("", "")
 
     override suspend fun readFrom(source: BufferedSource): UserAuth {
         return try {
@@ -46,6 +52,7 @@ internal object AuthJsonSerializer : OkioSerializer<UserAuth> {
             defaultValue // Return default values if there's an issue
         }
     }
+
     override suspend fun writeTo(t: UserAuth, sink: BufferedSink) {
         sink.buffer.writeUtf8(Json.encodeToString(t))
     }

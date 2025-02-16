@@ -1,11 +1,9 @@
 package com.rahullohra.instagram.feed
 
-import com.rahullohra.instagram.media.MediaItem
 import com.rahullohra.instagram.post.Post
 import com.rahullohra.instagram.post.PostsTable
 import com.rahullohra.instagram.user.User
 import com.rahullohra.instagram.user.UsersTable
-import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -27,16 +25,14 @@ object FeedsTable : UUIDTable("feeds") {
     val postId = reference("post_id", PostsTable) // FK to Posts table
     val rankingScore = float("ranking_score").default(0.0f) // Ranking score
     val createdAt = datetime("created_at") // Timestamp
+
+    init {
+        index(false, createdAt) // Index for pagination
+        index(false, userId) // Index for filtering by user
+        index(false, userId, createdAt) // Best index for filtering + pagination
+    }
 }
 
-
-@Serializable
-data class FeedResponse(
-    val postId: String,
-    val media: List<MediaItem>,
-    val createdAt: String
-
-)
 
 
 
