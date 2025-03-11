@@ -1,6 +1,7 @@
 package com.rahullohra.instagram.network
 
 import com.rahullohra.instagram.auth.data.remote.createAuthApiService
+import com.rahullohra.instagram.feed.data.remote.createFeedApiService
 import de.jensklingenberg.ktorfit.Ktorfit
 
 
@@ -16,3 +17,4 @@ val ktorfit = Ktorfit.Builder()
     .build()
 
 val authApiService = ktorfit.createAuthApiService()
+val feedApiService = ktorfit.createFeedApiService()

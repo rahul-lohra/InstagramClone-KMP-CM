@@ -15,6 +15,8 @@ class User(id: EntityID<UUID>) : UUIDEntity(id) {
     var username by UsersTable.username
     var email by UsersTable.email
     var createdAt by UsersTable.createdAt
+    var isVerified by UsersTable.isVerified
+
 
     // Relationship: List of followers for this user
     val followers by Follower referrersOn FollowersTable.userId
@@ -26,5 +28,6 @@ class User(id: EntityID<UUID>) : UUIDEntity(id) {
 object UsersTable : UUIDTable("users") {
     val username = varchar("username", 50).uniqueIndex() // Username
     val email = varchar("email", 255).uniqueIndex() // Email
+    val isVerified = bool("is_verified").default(false) // Verification status
     val createdAt = datetime("created_at") // Timestamp
 }

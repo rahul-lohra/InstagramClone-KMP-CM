@@ -1,8 +1,8 @@
-id,user_id,caption,created_at,visibility,is_active
-b3384f0c-81b9-4ab4-81a9-f393f935dbb9,b29e967a-866e-4c4f-80ca-fc537058819c,My first post!,2025-01-16T21:24:39.390057Z,PUBLIC,True
-4c92f165-b143-419f-8e8b-eb1f3928130b,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool photo!,2025-01-16T21:24:39.390069Z,PUBLIC,True
-edc71ff8-0287-43d3-9f67-22cd2ba6d1bf,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool photo!,2025-01-16T22:24:39.390069Z,PUBLIC,True
-463fbb4b-4827-4dd9-813b-46c0eb42bd77,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool photo!,2025-01-16T23:24:39.390069Z,PUBLIC,True
-9ecaf665-1de7-4bae-9657-c5a325fc6b0e,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool photo!,2025-01-17T01:24:39.390069Z,PUBLIC,True
-a8d6e357-1a8c-4e60-bb8a-876845e625cf,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool photo!,2025-01-17T02:24:39.390069Z,PUBLIC,True
-125762d2-24a4-4b80-a583-5c95dd0fb004,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool photo!,2025-01-17T03:24:39.390069Z,PUBLIC,True
+id,user_id,caption,tags,created_at,visibility,is_active,location,post_description
+b3384f0c-81b9-4ab4-81a9-f393f935dbb9,b29e967a-866e-4c4f-80ca-fc537058819c,My first post!,LoremIpsumTag,2025-01-16T21:24:39.390057Z,PUBLIC,True,India,Lorem Ipsum description of India
+4c92f165-b143-419f-8e8b-eb1f3928130b,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool chinese photo !,LoremIpsumTag,2025-01-16T21:24:39.390069Z,PUBLIC,True,Spain,Lorem Ipsum description of Spain
+edc71ff8-0287-43d3-9f67-22cd2ba6d1bf,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this cool italian Pizza!,LoremIpsumTag,2025-01-16T22:24:39.390069Z,PUBLIC,True,France,Lorem Ipsum description of France
+463fbb4b-4827-4dd9-813b-46c0eb42bd77,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this Super bike photo!,LoremIpsumTag,2025-01-16T23:24:39.390069Z,PUBLIC,True,Italy,Lorem Ipsum description of Italy
+9ecaf665-1de7-4bae-9657-c5a325fc6b0e,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this f1 car photo!,LoremIpsumTag,2025-01-17T01:24:39.390069Z,PUBLIC,True,Singapore,Lorem Ipsum description of Singapore
+a8d6e357-1a8c-4e60-bb8a-876845e625cf,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this temple photo!,LoremIpsumTag,2025-01-17T02:24:39.390069Z,PUBLIC,True,New Zealand,Lorem Ipsum description of New Zealand
+125762d2-24a4-4b80-a583-5c95dd0fb004,b29e967a-866e-4c4f-80ca-fc537058819c,Check out this mountain photo!,LoremIpsumTag,2025-01-17T03:24:39.390069Z,PUBLIC,True,Australia,Lorem Ipsum description of Australia

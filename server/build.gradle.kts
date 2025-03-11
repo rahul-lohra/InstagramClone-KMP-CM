@@ -23,7 +23,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:0.58.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.58.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.58.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+    implementation(libs.kotlinx.datetime)
     implementation("org.jetbrains.exposed:exposed-dao:0.58.0")
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
     implementation("com.h2database:h2:2.2.224")

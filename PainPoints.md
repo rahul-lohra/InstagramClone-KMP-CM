@@ -22,3 +22,6 @@ while a Instagram Clone
 3. Customize the status bar icon color
    - No good support from android & ios
    - So we will skip this
+4. Paging 3 is KMP ready but not CMP 
+   - https://youtrack.jetbrains.com/issue/CMP-6743/Support-Paging-3#:~:text=The%20androidx%20Paging%203%20library,this%20package%20is%20already%20commonized.
+5. Dispatchers.Main is not available in all platform

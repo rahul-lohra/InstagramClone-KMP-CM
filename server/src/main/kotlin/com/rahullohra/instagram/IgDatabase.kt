@@ -33,7 +33,7 @@ import org.jetbrains.exposed.sql.update
 object IgDatabase {
     val database: Database
     val h2InMemoryUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-    val h2DiskUrl = "jdbc:h2:~/IdeaProjects/InstagramClone/db/h2_db"
+    val h2DiskUrl = "jdbc:h2:~/IdeaProjects/InstagramClone/db/ig_db"
 
     fun getDbUrl() = h2DiskUrl
 
@@ -51,10 +51,10 @@ object IgDatabase {
             addLogger(StdOutSqlLogger)
             createTables()
             insertSampleData()
-            runBlocking {
-                MediaDownloader().downloadImages()
-            }
-            populateMediaTableWithPosts()
+//            runBlocking {
+//                MediaDownloader().downloadImages()
+//            }
+//            populateMediaTableWithPosts()
         }
     }
 

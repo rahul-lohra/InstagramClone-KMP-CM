@@ -25,6 +25,9 @@ kotlin {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
             implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.2")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+
+
         }
     }
 }

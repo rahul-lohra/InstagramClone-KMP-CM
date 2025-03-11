@@ -17,15 +17,22 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import com.rahullohra.instagram.InstagramScreens
 import com.rahullohra.instagram.auth.data.local.AuthStore
+import com.rahullohra.instagram.feed.data.FeedPagingSource
+import com.rahullohra.instagram.feed.data.FeedRepository
 import com.rahullohra.instagram.feed.post.PostListUi
+import com.rahullohra.instagram.feed.ui.FeedViewmodel
+import com.rahullohra.instagram.network.feedApiService
+import com.rahullohra.instagram.paging.collectAsLazyPagingItems
 import instagramclone.composeapp.generated.resources.Res
 import instagramclone.composeapp.generated.resources.camera
 import instagramclone.composeapp.generated.resources.heart
@@ -40,20 +47,62 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun FeedScreen(navController: NavHostController, authStore: AuthStore) {
+    val viewModel: FeedViewmodel = viewModel(
+        key = FeedViewmodel.KEY,
+        factory = viewModelFactory {
+            initializer {
+                FeedViewmodel(FeedPagingSource(FeedRepository(feedApiService)))
+            }
+        }
+    )
+
     Scaffold(
         topBar = { FeedAppBar(navController) },
         bottomBar = { FeedBottomBar(navController, authStore) }) {
-        val lazyColumnListState = rememberLazyListState()
-        val itemsList = (0..5).toList()
-        val itemsIndexedList = listOf("Your Story", "karenne", "zackjohn", "kieron_d", "crag_love", "John", "Wick")
-        LazyColumn (state = lazyColumnListState, modifier = Modifier.padding(bottom = 56.dp)) {
-            itemsIndexed(itemsIndexedList) { index, item ->
-                if(index == 0){
-                    StoryUi()
-                }else {
-                    PostListUi()
-                    Spacer(Modifier.height(4.dp))
-                }
+//        FeedPaginatedContent()
+    }
+}
+
+@Composable
+fun FeedCentralContentOld() {
+    val lazyColumnListState = rememberLazyListState()
+//    LazyPagingItems
+//    val lazyPagingItems = viewModel.feedPagingFlow.collectAsLazyPagingItems()
+    val itemsList = (0..5).toList()
+    val itemsIndexedList =
+        listOf("Your Story", "karenne", "zackjohn", "kieron_d", "crag_love", "John", "Wick")
+    LazyColumn(state = lazyColumnListState, modifier = Modifier.padding(bottom = 56.dp)) {
+        itemsIndexed(itemsIndexedList) { index, item ->
+            if (index == 0) {
+                StoryUi()
+            } else {
+//                PostListUi()
+                Spacer(Modifier.height(4.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun FeedCentralContent() {
+    val lazyColumnListState = rememberLazyListState()
+    val viewModel: FeedViewmodel = viewModel(key = FeedViewmodel.KEY)
+    val items = viewModel.feedPagingFlow.collectAsLazyPagingItems()
+//    val itemsList = (0..5).toList()
+//    val itemsIndexedList = listOf("Your Story", "karenne", "zackjohn", "kieron_d", "crag_love", "John", "Wick")
+    LazyColumn(state = lazyColumnListState, modifier = Modifier.padding(bottom = 56.dp)) {
+//        itemsIndexed(itemsIndexedList) { index, item ->
+//            if(index == 0){
+//                StoryUi()
+//            }else {
+//                PostListUi()
+//                Spacer(Modifier.height(4.dp))
+//            }
+//        }
+        items(items.itemCount) { index ->
+            items[index]?.let {
+                PostListUi(it)
+                Spacer(Modifier.height(4.dp))
             }
         }
     }
@@ -68,20 +117,20 @@ fun FeedAppBar(navController: NavHostController) {
     }, elevation = 0.dp,
         backgroundColor = Color.Transparent,
         navigationIcon = {
-        IconButton(onClick = {}) {
-            Icon(painterResource(Res.drawable.camera), null)
-        }
-    }, actions = {
-        Row {
             IconButton(onClick = {}) {
-                Icon(painterResource(Res.drawable.igtv), null)
+                Icon(painterResource(Res.drawable.camera), null)
             }
-            IconButton(onClick = {}) {
-                Icon(painterResource(Res.drawable.messanger), null)
-            }
+        }, actions = {
+            Row {
+                IconButton(onClick = {}) {
+                    Icon(painterResource(Res.drawable.igtv), null)
+                }
+                IconButton(onClick = {}) {
+                    Icon(painterResource(Res.drawable.messanger), null)
+                }
 
-        }
-    })
+            }
+        })
 
 }
 

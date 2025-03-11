@@ -7,6 +7,8 @@ import com.rahullohra.instagram.comment.Comment
 import com.rahullohra.instagram.feed.Feed
 import com.rahullohra.instagram.follower.Follower
 import com.rahullohra.instagram.like.Like
+import com.rahullohra.instagram.media.Media
+import com.rahullohra.instagram.media.MediaType
 import com.rahullohra.instagram.post.Post
 import com.rahullohra.instagram.post.Visibility
 import com.rahullohra.instagram.user.User
@@ -60,6 +62,22 @@ class Csv {
                 createdAt = Instant.parse(row["created_at"]!!).toLocalDateTime(TimeZone.UTC)
                 visibility = Visibility.valueOf(row["visibility"]!!)
                 isActive = row["is_active"]!!.toBoolean()
+                location = row["location"]
+                postDescription = row["post_description"]
+            }
+        }
+    }
+
+    private fun insertMedia() {
+        val mediaCsv = readCsv("media.csv")
+        mediaCsv.forEach { row ->
+            Media.new(UUID.fromString(row["id"])) {
+                post = Post.findById(UUID.fromString(row["post_id"]))!!
+                mimeType = row["mimetype"]!!
+                mediaType = MediaType.valueOf(row["mediaType"]!!)
+                fileName = row["fileName"]!!
+                mediaUrl = row["media_url"]!!
+                createdAt = Instant.parse(row["created_at"]!!).toLocalDateTime(TimeZone.UTC)
             }
         }
     }
@@ -121,6 +139,7 @@ class Csv {
                 insertFeeds()
                 insertLikes()
                 insertComments()
+                insertMedia()
             }
         }
         println("Database successfully populated from CSV files.")
