@@ -10,12 +10,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.svg.SvgDecoder
+import com.rahullohra.instagram.auth.data.UserAuth
 import com.rahullohra.instagram.auth.data.local.AuthStore
 import com.rahullohra.instagram.auth.ui.AuthScreen
 import com.rahullohra.instagram.auth.ui.UsernamePasswordScreen
@@ -45,7 +47,13 @@ fun App() {
         Scaffold() {
             val authStore =  remember("auth_store") { AuthStore { "auth" }  }
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = InstagramScreens.UserNamePassword.title){
+            val credentials by authStore.getCredentials().collectAsStateWithLifecycle(initialValue = UserAuth("", ""))
+            val startDestination = if (credentials.token.isEmpty()) {
+                InstagramScreens.UserNamePassword.title
+            } else {
+                InstagramScreens.Feed.title
+            }
+            NavHost(navController = navController, startDestination = startDestination){
                 composable(route = InstagramScreens.Auth.title) {
                     AuthScreen(onSwitchAccountClick = {
                         navController.navigate(InstagramScreens.UserNamePassword.title)
